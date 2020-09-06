@@ -9,15 +9,17 @@ echo dump($_POST);
 $descricao = $_POST['descricao'];
 $valor = $_POST['valor'];
 $tipo = $_POST['tipo'];
+$datahoramovimento = $_POST['datahoramovimento'];
 
 // gravar no banco
 $pdo = dbConnect();
 
-$sql = 'INSERT INTO transaction (tipo,descricao,valor) values( :tipo, :descricao, :valor );';
+$sql = 'INSERT INTO transaction (tipo,descricao,valor,datahoramovimento) values( :tipo, :descricao, :valor, :datahoramovimento );';
 $statement = $pdo->prepare($sql);
 $statement->bindParam(":tipo", $tipo, PDO::PARAM_STR);
 $statement->bindParam(":descricao", $descricao, PDO::PARAM_STR);
 $statement->bindParam(":valor", $valor, PDO::PARAM_STR);
+$statement->bindParam(":datahoramovimento", $datahoramovimento, PDO::PARAM_STR);
 
 $resultado = $statement->execute();
 

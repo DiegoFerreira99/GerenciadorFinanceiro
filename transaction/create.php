@@ -24,6 +24,8 @@ require_once('../utils.php');
         Tipo: <input type="text" placeholder="Digite o tipo aqui" name="tipo"> <br><br>
         Descrição: <input type= "text" placeholder="Digite a descrição aqui" name="descricao"> <br><br>
         Valor: <input type="text" placeholder="Digite o valor aqui" name="valor"> <br><br>
+        Data: <input type="datetime-local" placeholder="Coloque a data aqui" name="datahoramovimento"><br><br> 
+        
         <input type ="submit" value="Enviar">&nbsp;
         <input type ="reset" value = "Apagar">
         </form>

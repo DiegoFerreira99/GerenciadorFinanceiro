@@ -21,10 +21,20 @@ $movimentos = $statement->fetchAll(PDO::FETCH_ASSOC);
 // var_export($movimentos);
 // dump($movimentos);
 
+// para cada registro, itero sobre ele
 for ($i=0; $i < count($movimentos); $i++) { 
-    
+    //acumulando valor para o saldo
     $saldofinal = $saldofinal - $movimentos[$i]['valor'];
     $movimentos[$i]['saldo']=$saldofinal;
+
+    //convertendo a data para uma data legível
+    $movimentos[$i]['datahoramovimentoReadable'] = converteData($movimentos[$i]['datahoramovimento']);
+
+    //converter o valor para numero com virgula
+    $movimentos[$i]['valorLegivel'] = converteSaldo($movimentos[$i]['valor']);
+
+    //converter o saldo para numero com virgula
+    $movimentos[$i]['saldoLegivel'] = converteSaldo($movimentos[$i]['saldo']);
 
 }
 
@@ -64,9 +74,10 @@ for ($i=0; $i < count($movimentos); $i++) {
                 <tr>
                     <th>#</th>
                     <th>Descricao</th>
-                    <th>tipo</th>
-                    <th>valor</th>
-                    <th>saldo</th>
+                    <th>Tipo</th>
+                    <th>Valor</th>
+                    <th>Saldo</th>
+                    <th>Data e Hora</th>
                 </tr>
             </thead>
             <tbody>
@@ -77,8 +88,9 @@ for ($i=0; $i < count($movimentos); $i++) {
                         <td>$movimento[id]</td>
                         <td>$movimento[descricao]</td>
                         <td>$movimento[tipo]</td>
-                        <td>$movimento[valor]</td>
-                        <td>$movimento[saldo]</td>
+                        <td>$movimento[valorLegivel]</td>
+                        <td>$movimento[saldoLegivel]</td>
+                        <td>$movimento[datahoramovimentoReadable]</td>
                     </tr>";
                 } ?>
             </tbody>
