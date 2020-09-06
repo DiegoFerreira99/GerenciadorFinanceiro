@@ -1,0 +1,25 @@
+data
+despesa/receita
+
+create
+
+Tipo - despesa ou receita
+Descrição - descritivo do que foi comprado/vendido
+valor - valor da movimentação
+
+Data - data da movimentação
+Recorrência - se o movimento deve ser criado com mesmo valor (sem ser efetuado) todos os meses (ex. netflix, spotify)
+Parcelado - se o movimento deve ter seu valor dividido em X vezes e criado, semelhante a recorrencia, pelos proximos X meses. (ex. compra de notebook em 10x de 300 reais)
+Origem - ???
+Categoria - alimentação, eletronicos, farmacia, higiene, médico, contas de casa, etc;
+conta - conta na qual foi feita a transação (itau, dinheiro vivo, nubank, inter, etc.)
+Saldo - saldo resultante da conta (somente exibição) antes de efetuar a criação
+
+se a data estiver para o futuro, não é considerada efetuada
+se a data for hoje ou no passado, é considerada efetuada
+
+
+read
+update
+delete
+

@@ -1,0 +1,44 @@
+* {
+    font-family: Arial;
+    font-size: 20px;
+}
+table,
+table *
+{
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 10px;
+}
+.dump {
+    margin: 10px;
+    padding: 10px;
+    background-color: #000000;
+    color: #eeeeee;
+}
+nav {
+    /* border: 1px solid red; */
+}
+.btn {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 3px solid #555555;
+    color: black;
+    margin: 10px;
+}
+a.btn,
+a.btn:hover,
+a.btn:visited {
+    text-decoration: none;
+}
+
+.successMessage{
+    background-color: #acffac;
+    padding: 10px;
+    margin: 10px 0px;
+}
+
+.errorMessage{
+    background-color: #ff9797;
+    padding: 10px;
+    margin: 10px 0px;
+}
