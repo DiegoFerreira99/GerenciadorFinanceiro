@@ -1,5 +1,5 @@
 <?php
-
+/*
 require_once "utils.php";
 
 //preparar os dados
@@ -18,4 +18,4 @@ if($resultado){
     redirect("transaction/create.php?error=$erro");
 }
 
-?>
+?>*/

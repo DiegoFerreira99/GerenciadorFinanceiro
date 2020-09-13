@@ -24,8 +24,14 @@ $movimentos = $statement->fetchAll(PDO::FETCH_ASSOC);
 // para cada registro, itero sobre ele
 for ($i=0; $i < count($movimentos); $i++) { 
     //acumulando valor para o saldo
-    $saldofinal = $saldofinal - $movimentos[$i]['valor'];
-    $movimentos[$i]['saldo']=$saldofinal;
+    if($movimentos[$i]['tipo'] == "Despesa"){
+        $saldofinal = $saldofinal - $movimentos[$i]['valor'];
+        $movimentos[$i]['saldo']=$saldofinal;
+    }elseif($movimentos[$i]['tipo'] == "Receita"){
+        $saldofinal = $saldofinal + $movimentos[$i]['valor'];
+        $movimentos[$i]['saldo']=$saldofinal;
+    }
+    
 
     //convertendo a data para uma data legível
     $movimentos[$i]['datahoramovimentoReadable'] = converteData($movimentos[$i]['datahoramovimento']);
