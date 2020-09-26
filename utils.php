@@ -2,6 +2,11 @@
 
 setlocale(LC_TIME, "ptb");
 
+define("defaultMessage", [
+    'notNull' => 'Valor não pode ser vazio',
+    'notEmptyString' => 'Valor não pode ser vazio',
+    'notEquals' => 'Valor não é igual'
+]);
 
 /**
  * Exibe o dump da variavel passada na tela, formatada em um bloco pre (texto formatado).
@@ -51,5 +56,35 @@ function dbConnect () {
         return $pdo;
     } catch (\PDOException $e) {
         dump('Connection failed: ' . $e->getMessage());
+    }
+}
+
+/**
+ * Função que recebe valor e um array de regras, conforme abaixo.
+ * Regras disponíveis: null, emptyString
+ */
+function basicValidation($value, $rules){
+    //se a regra existe e o valor for inválido...
+    if(isset($rules['null']) && $value == null) {
+        return [false, defaultMessage['notNull']];
+    }
+    if(isset($rules['emptyString']) && $value == '') {
+        return [false, defaultMessage['notEmptyString']];
+    }
+    if(isset($rules['equals']) && $value != $rules['value']) {
+        return [false, defaultMessage['notEquals']];
+    }
+    return [true,null];
+}
+
+/**
+ * Recebe nome do campo, valor do campo, regras e destino caso erro
+ * Valida campos, cria a mensagem de erro e dispara para o destino caso erro.
+ */
+function validate($name, $value, $rules, $destinoCasoErro){
+    $validate = basicValidation($value, $rules);
+    if(!$validate[0]) {
+        redirect($destinoCasoErro . "?error=Campo $name: $validate[1]");
+        exit();
     }
 }

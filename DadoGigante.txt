@@ -22,6 +22,10 @@ Saldo - saldo resultante da conta (somente exibição) antes de efetuar a criaç
 se a data estiver para o futuro, não é considerada efetuada
 se a data for hoje ou no passado, é considerada efetuada
 
+20/09/2020
+
+Adicionar contas diferentes para pagamento
+Criar transferência entre contas
 
 read
 update

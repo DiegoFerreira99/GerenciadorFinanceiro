@@ -1,49 +1,5 @@
 <?php
-require_once("utils.php");
-
-
-$saldoinicial = 5000;
-$saldofinal = $saldoinicial;
-
-// pegar do banco
-$pdo = dbConnect();
-
-$sql = 'select * from transaction order by id asc;';
-$statement = $pdo->prepare($sql);
-// $statement->bindParam(":tipo", $tipo, PDO::PARAM_STR);
-// $statement->bindParam(":descricao", $descricao, PDO::PARAM_STR);
-// $statement->bindParam(":valor", $valor, PDO::PARAM_STR);
-
-$resultado = $statement->execute();
-
-$movimentos = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-// var_export($movimentos);
-// dump($movimentos);
-
-// para cada registro, itero sobre ele
-for ($i=0; $i < count($movimentos); $i++) { 
-    //acumulando valor para o saldo
-    if($movimentos[$i]['tipo'] == "Despesa"){
-        $saldofinal = $saldofinal - $movimentos[$i]['valor'];
-        $movimentos[$i]['saldo']=$saldofinal;
-    }elseif($movimentos[$i]['tipo'] == "Receita"){
-        $saldofinal = $saldofinal + $movimentos[$i]['valor'];
-        $movimentos[$i]['saldo']=$saldofinal;
-    }
-    
-
-    //convertendo a data para uma data legível
-    $movimentos[$i]['datahoramovimentoReadable'] = converteData($movimentos[$i]['datahoramovimento']);
-
-    //converter o valor para numero com virgula
-    $movimentos[$i]['valorLegivel'] = converteSaldo($movimentos[$i]['valor']);
-
-    //converter o saldo para numero com virgula
-    $movimentos[$i]['saldoLegivel'] = converteSaldo($movimentos[$i]['saldo']);
-
-}
-
+require_once "utils.php";
 ?>
 
 <!DOCTYPE html>
@@ -51,18 +7,36 @@ for ($i=0; $i < count($movimentos); $i++) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciador Financeiro</title>
+    <title>Document</title>
     <link rel="stylesheet" href="/assets/style.css">
 </head>
 <body>
-    <header>
-        <h1>Gerenciador Financeiro</h1>
-    </header>
-    <nav>
-        <a class="btn" href="<?= path('transaction\create.php') ?>">Novo Movimento</a>
-    </nav>
-    <section>
-        <h3>Movimentos</h3>
+    <h1>Login</h1>
+
+    <form action="<?= path('login\login.php') ?>" method="POST">
+        <label for="nomeLogin">Nome</label>
+        <input type="text" name="nome" id="nomeLogin"><br><br>
+
+        <label for="senhaLogin">Senha</label>
+        <input type="password" name="senha" id="senhaLogin"><br><br>
+        
+        <input type="submit" value="Entrar">
+    </form>
+
+<hr>
+
+    <h2>Cadastro</h2>
+    <form action="<?= path('login\register.php') ?>" method="POST">
+        <label for="nomeRegister">Nome</label>
+        <input type="text" name="nome" id="nomeRegister"><br><br>
+
+        <label for="senhaRegister">Senha</label>
+        <input type="password" name="senha" id="senha1Register"><br><br>
+
+        <label for="repitaSenhaRegister">Repita a senha</label>
+        <input type="password" name="repitaSenha" id="repitaSenhaRegister"><br><br>
+
+        <input type="submit" value="Criar conta">
 
         <?php if(isset($_GET['success'])){
             echo "
@@ -71,40 +45,14 @@ for ($i=0; $i < count($movimentos); $i++) {
             </div>
             ";
         } ?>
-        
 
-        Saldo Inicial: <?php echo $saldoinicial;?>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Descricao</th>
-                    <th>Tipo</th>
-                    <th>Valor</th>
-                    <th>Saldo</th>
-                    <th>Data e Hora</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php 
-                for ($i=0; $i < count($movimentos); $i++) { 
-                    $movimento = $movimentos[$i];
-                    echo "<tr>
-                        <td>$movimento[id]</td>
-                        <td>$movimento[descricao]</td>
-                        <td>$movimento[tipo]</td>
-                        <td>$movimento[valorLegivel]</td>
-                        <td>$movimento[saldoLegivel]</td>
-                        <td>$movimento[datahoramovimentoReadable]</td>
-                    </tr>";
-                } ?>
-            </tbody>
-        </table>
-        Saldo Final: <?= $saldofinal ?>
-    </section>
-    <footer>
-        Feito por Diego e Rui
-    </footer>
+        <?php if(isset($_GET['error'])){
+            echo "
+            <div class='errorMessage'>
+                $_GET[error]
+            </div>
+            ";
+        } ?>
+    </form>
 </body>
 </html>
