@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once "../utils.php";
 
 $nome = $_POST['nome'];
@@ -24,4 +25,5 @@ if (count($usuarios) == 0){
     exit();
 }
 
+$_SESSION ["usuario_id"] = $usuarios[0]["id"];
 redirect("listamovimentos.php");

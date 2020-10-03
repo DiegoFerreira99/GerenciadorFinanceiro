@@ -1,15 +1,18 @@
 <?php
+session_start();
 require_once("utils.php");
 
 
 $saldoinicial = 0;
 $saldofinal = $saldoinicial;
+$_SESSION["usuario_id"];
 
 // pegar do banco
 $pdo = dbConnect();
 
-$sql = 'select * from transaction order by id asc;';
+$sql = 'select * from movimentos WHERE usuario_id = :usuario_id order by id asc;';
 $statement = $pdo->prepare($sql);
+$statement->bindParam(":usuario_id", $_SESSION["usuario_id"], PDO::PARAM_STR);
 // $statement->bindParam(":tipo", $tipo, PDO::PARAM_STR);
 // $statement->bindParam(":descricao", $descricao, PDO::PARAM_STR);
 // $statement->bindParam(":valor", $valor, PDO::PARAM_STR);
@@ -59,6 +62,8 @@ for ($i=0; $i < count($movimentos); $i++) {
         <h1>Gerenciador Financeiro</h1>
     </header>
     <nav>
+        <a href="<?= path('login\logout.php') ?>">Logout</a>
+        <br>
         <a class="btn" href="<?= path('transaction\create.php') ?>">Novo Movimento</a>
     </nav>
     <section>
@@ -71,10 +76,7 @@ for ($i=0; $i < count($movimentos); $i++) {
             </div>
             ";
         } ?>
-        
-
         Saldo Inicial: <?php echo $saldoinicial;?>
-
         <table>
             <thead>
                 <tr>

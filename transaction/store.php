@@ -1,11 +1,12 @@
 <?php
-
+session_start();
 require_once "../utils.php";
 
 //preparar os dados
 
 echo dump($_POST); 
 
+$_SESSION["usuario_id"];
 $descricao = $_POST['descricao'];
 $valor = $_POST['valor'];
 $tipo = $_POST['tipo'];
@@ -38,12 +39,13 @@ if($datahoramovimento == null || $datahoramovimento == ""){
 // gravar no banco
 $pdo = dbConnect();
 
-$sql = 'INSERT INTO transaction (tipo,descricao,valor,datahoramovimento) values( :tipo, :descricao, :valor, :datahoramovimento );';
+$sql = 'INSERT INTO movimentos (tipo,descricao,valor,datahoramovimento,usuario_id) values( :tipo, :descricao, :valor, :datahoramovimento, :usuario_id);';
 $statement = $pdo->prepare($sql);
 $statement->bindParam(":tipo", $tipo, PDO::PARAM_STR);
 $statement->bindParam(":descricao", $descricao, PDO::PARAM_STR);
 $statement->bindParam(":valor", $valor, PDO::PARAM_STR);
 $statement->bindParam(":datahoramovimento", $datahoramovimento, PDO::PARAM_STR);
+$statement->bindParam(":usuario_id", $_SESSION["usuario_id"], PDO::PARAM_STR);
 
 $resultado = $statement->execute();
 
