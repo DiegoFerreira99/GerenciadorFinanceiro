@@ -3,8 +3,8 @@
 setlocale(LC_TIME, "ptb");
 
 define("defaultMessage", [
-    'notNull' => 'Valor não pode ser vazio',
-    'notEmptyString' => 'Valor não pode ser vazio',
+    'nullValue' => 'Valor não pode ser vazio',
+    'emptyString' => 'Valor não pode ser vazio',
     'notEquals' => 'Valor não é igual'
 ]);
 
@@ -65,11 +65,11 @@ function dbConnect () {
  */
 function basicValidation($value, $rules){
     //se a regra existe e o valor for inválido...
-    if(isset($rules['null']) && $value == null) {
-        return [false, defaultMessage['notNull']];
+    if(isset($rules['notNull']) && $value == null) {
+        return [false, defaultMessage['nullValue']];
     }
-    if(isset($rules['emptyString']) && $value == '') {
-        return [false, defaultMessage['notEmptyString']];
+    if(isset($rules['notEmptyString']) && $value == '') {
+        return [false, defaultMessage['emptyString']];
     }
     if(isset($rules['equals']) && $value != $rules['value']) {
         return [false, defaultMessage['notEquals']];
@@ -86,5 +86,45 @@ function validate($name, $value, $rules, $destinoCasoErro){
     if(!$validate[0]) {
         redirect($destinoCasoErro . "?error=Campo $name: $validate[1]");
         exit();
+    }
+}
+
+
+/**
+ * @param string $neededStatus
+ * Verifica se o usuário está logado e pode ver a página atual.
+ * Needed Status pode ser guest para não logado ou logged para logado.
+ */
+function allowUser ($neededStatus)
+{
+    session_start();
+    $defaultLogged = 'listamovimentos.php';
+    $defaultGuest = 'index.php';
+
+    $logged = false;
+    if(
+        isset($_SESSION["usuario_id"]) && 
+        $_SESSION["usuario_id"] !== null && 
+        $_SESSION["usuario_id"] !== 0)
+        {
+        $logged = true;
+    }
+
+    switch ($neededStatus) {
+        case 'guest':
+            if($logged){
+                //se é visita e está logado, redireciona
+                redirect($defaultLogged);
+            }
+            break;
+        case 'logged':
+            if(!$logged){
+                //se devia setar logado mas não está, é visita, redireciona
+                redirect($defaultGuest);
+            }
+            break;
+        default:
+            throw new \Exception("Tipo neededStatus inválido!", 1);
+            break;
     }
 }

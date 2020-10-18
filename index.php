@@ -1,5 +1,6 @@
 <?php
 require_once "utils.php";
+allowUser('guest');
 ?>
 
 <!DOCTYPE html>

@@ -1,7 +1,6 @@
 <?php
-session_start();
 require_once("utils.php");
-
+allowUser('logged');
 
 $saldoinicial = 0;
 $saldofinal = $saldoinicial;

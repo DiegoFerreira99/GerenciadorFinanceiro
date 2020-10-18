@@ -5,9 +5,9 @@ $nome = $_POST['nome'];
 $senha = $_POST['senha'];
 $repitaSenha = $_POST['repitaSenha'];
 
-validate('Nome', $nome, ['null' => 1, 'emptyString' => 1], '');
-validate('Senha', $senha, ['null' => 1, 'emptyString' => 1], '');
-validate('Repita a senha', $repitaSenha, ['null' => 1, 'emptyString' => 1], '');
+validate('Nome', $nome, ['notNull' => 1, 'notEmptyString' => 1], '');
+validate('Senha', $senha, ['notNull' => 1, 'notEmptyString' => 1], '');
+validate('Repita a senha', $repitaSenha, ['notNull' => 1, 'notEmptyString' => 1], '');
 validate('Repita a senha', $senha, ['equals' => 1, 'value' => $repitaSenha], '');
 
 $pdo = dbConnect();
@@ -23,10 +23,12 @@ if(count($usuarios) > 0){
     exit();
 }
 
+//hashear a senha
+$hashedPass = password_hash($senha, PASSWORD_DEFAULT);
 $sql2 = 'INSERT INTO usuarios (nome,senha) values (:nome, :senha);';
 $statement2 = $pdo->prepare($sql2);
 $statement2->bindParam(":nome", $nome, PDO::PARAM_STR);
-$statement2->bindParam(":senha", $senha, PDO::PARAM_STR);
+$statement2->bindParam(":senha", $hashedPass, PDO::PARAM_STR);
 
 $resultado = $statement2->execute();
 
