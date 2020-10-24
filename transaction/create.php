@@ -28,11 +28,11 @@ require_once('../utils.php');
             <br><br>
             Descrição: <input type="text" id="descricao" placeholder="Digite a descrição aqui" name="descricao"> <br><br>
             Valor: <input type="text" id="valor" placeholder="Digite o valor aqui" name="valor"> <br><br>
-            Data: <input type="datetime-local" id="datahoramovimento" placeholder="Coloque a data aqui" name="datahoramovimento"><br><br> 
+            Data: <input type="date" id="datahoramovimento" placeholder="Coloque a data aqui" name="datahoramovimento"><br><br> 
         
+            <a class="btn" href="<?= path('index.php') ?>">Voltar</a>
             <input class="btn" type="reset" value="Apagar">
             <button class="btn" type="button" onclick="transactionStore()">Enviar</button>&nbsp;
-            <a class="btn" href="<?= path('index.php') ?>">Voltar</a>
         </form>
 
         <div id="messageDiv"></div>
@@ -68,7 +68,7 @@ function transactionStore () {
     }
     
     if(formValido === false){
-        setMessage ('messageDiv', dados.body, 'erro');
+        setMessage ('messageDiv', alerta, 'erro');
         return;
     } else {
         setMessage ('messageDiv', '', 'hide');

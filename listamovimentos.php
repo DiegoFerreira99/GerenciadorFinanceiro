@@ -12,16 +12,10 @@ $pdo = dbConnect();
 $sql = 'select * from movimentos WHERE usuario_id = :usuario_id order by id asc;';
 $statement = $pdo->prepare($sql);
 $statement->bindParam(":usuario_id", $_SESSION["usuario_id"], PDO::PARAM_STR);
-// $statement->bindParam(":tipo", $tipo, PDO::PARAM_STR);
-// $statement->bindParam(":descricao", $descricao, PDO::PARAM_STR);
-// $statement->bindParam(":valor", $valor, PDO::PARAM_STR);
 
 $resultado = $statement->execute();
 
 $movimentos = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-// var_export($movimentos);
-// dump($movimentos);
 
 // para cada registro, itero sobre ele
 for ($i=0; $i < count($movimentos); $i++) { 

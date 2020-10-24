@@ -29,7 +29,7 @@ function converteData ($stringData){
     //gera o nome do dia da semana em ptbr
     $weekDay = strftime("%A", $dateObject->getTimestamp());
 
-    $dateTimeReadable .= " ($weekDay)";
+    $dateTimeReadable .= utf8_encode(" ($weekDay)");
     return $dateTimeReadable;
 }
 
