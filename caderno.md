@@ -19,5 +19,9 @@ Diz ao git para passar a enxergar/considerar as mudanças feitas.
 ## git commit -m "[mensagem do seu commit]"
 Diz ao git para criar um checkpoint (chamado commit), um save, que você pode referenciar no tempo (ir ou voltar no tempo) e subir para o github.
 
+## git commit --amend
+Diz ao git para adicionar mudanças no último commit feito. Util para adicionar detalhes que se tenha esquecido. Caso tenha dado push antes, é necessário usar --force para dar push após este comando.
+
+
 ## git push
 Diz ao git para dar push (empurrar) as mudanças para o github (online).

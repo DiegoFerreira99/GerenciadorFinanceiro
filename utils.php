@@ -128,3 +128,24 @@ function allowUser ($neededStatus)
             break;
     }
 }
+
+function httpResponse ($args) {
+    $headers = '';
+    foreach ($args['headers'] as $key => $header) {
+        $headers .= "$header;";
+    }
+
+    http_response_code($args['code']);
+    header($headers);
+
+    if(isset($args['body']) && $args['body'] !== null){
+        $data['body'] = $args['body'];
+    }
+    // if(isset($args['error']) && $args['error'] !== null){
+    //     $data['error'] = $args['error'];
+    // }
+
+    echo json_encode($data);
+    
+    exit();
+}

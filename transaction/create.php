@@ -3,7 +3,7 @@ require_once('../utils.php');
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ptbr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,35 +20,99 @@ require_once('../utils.php');
     <section>
         <h3>Novo movimento</h3>
         
-        <form method="post" action="<?= path('transaction\store.php') ?>">
-            Tipo: <input id="despesa" type="radio" name="tipo" value="Despesa" required> 
+        <form id="formNovoMovimento" method="post" action="<?= path('transaction\store.php') ?>">
+            Tipo: <input id="despesa" type="radio" name="tipo" value="Despesa"> 
             <label for="despesa">Despesa<label>
-            <input id="receita" type="radio" name="tipo" value="Receita" required>
+            <input id="receita" type="radio" name="tipo" value="Receita">
             <label for="receita">Receita<label>
             <br><br>
-        Descrição: <input type= "text" placeholder="Digite a descrição aqui" name="descricao" required> <br><br>
-        Valor: <input type="text" placeholder="Digite o valor aqui" name="valor" required> <br><br>
-        Data: <input type="datetime-local" placeholder="Coloque a data aqui" name="datahoramovimento" required><br><br> 
+            Descrição: <input type="text" id="descricao" placeholder="Digite a descrição aqui" name="descricao"> <br><br>
+            Valor: <input type="text" id="valor" placeholder="Digite o valor aqui" name="valor"> <br><br>
+            Data: <input type="datetime-local" id="datahoramovimento" placeholder="Coloque a data aqui" name="datahoramovimento"><br><br> 
         
-        <input type ="submit" value="Enviar">&nbsp;
-        <input type ="reset" value = "Apagar">
+            <input class="btn" type="reset" value="Apagar">
+            <button class="btn" type="button" onclick="transactionStore()">Enviar</button>&nbsp;
+            <a class="btn" href="<?= path('index.php') ?>">Voltar</a>
         </form>
 
-        <?php if(isset($_GET['success'])){
-            echo "
-            <div class='successMessage'>
-                $_GET[success]
-            </div>
-            ";
-        } ?>
+        <div id="messageDiv"></div>
 
-        <?php if(isset($_GET['error'])){
-            echo "
-            <div class='errorMessage'>
-                $_GET[error]
-            </div>
-            ";
-        } ?>
+        <div id="result"></div>
     </section>
+
+<script>
+function transactionStore () {
+    let tipo = document.querySelector('input[name="tipo"]:checked')
+    if(tipo != null){
+        tipo = tipo.value;
+    }
+    let descricao = document.getElementById("descricao").value;
+    let valor = document.getElementById("valor").value;
+    let datahoramovimento = document.getElementById("datahoramovimento").value;
+
+    let formValido = true;
+    let alerta = '';
+
+    if(tipo == null){
+        formValido = false;
+        alerta = 'Selecione um tipo de movimento (despesa ou receita)!';
+    } else if(descricao == null || descricao == ''){
+        formValido = false;
+        alerta = 'Escreva uma descrição para o seu movimento!';
+    } else if(valor ==  null || valor <= 0 ){
+        formValido = false;
+        alerta = "Digite um valor válido para o seu movimento!";
+    } else if(datahoramovimento == null || datahoramovimento == ''){
+        formValido = false;
+        alerta = "Coloque uma data para o seu movimento!";
+    }
+    
+    if(formValido === false){
+        setMessage ('messageDiv', dados.body, 'erro');
+        return;
+    } else {
+        setMessage ('messageDiv', '', 'hide');
+    }
+
+    let form = new FormData();
+    form.set('tipo',tipo);
+    form.set('descricao',descricao);
+    form.set('valor',valor);
+    form.set('datahoramovimento',datahoramovimento);
+
+    fetch('store.php', {
+        method: 'POST',
+        headers: new Headers(),
+        mode: 'cors',
+        cache: 'default',
+        body: form
+    }).then(function(response) {
+        response.json().then(function(dados) {
+            if(response.ok) {
+                setMessage ('messageDiv', dados.body, 'sucesso');
+                document.getElementById("formNovoMovimento").reset();
+            } else {
+                setMessage ('messageDiv', dados.body, 'erro');
+            }
+        });
+    }).catch(function (error){
+        console.log('erro catch', error);
+    });
+}
+
+function setMessage (idElemento, alerta, tipo) {
+    let messageDiv = document.getElementById(idElemento);
+    messageDiv.classList.remove('successMessage');
+    messageDiv.classList.remove('errorMessage');
+    messageDiv.innerHTML = alerta;
+    if(tipo === 'sucesso') {
+        messageDiv.classList.add('successMessage');
+    } else if(tipo === 'erro') {
+        messageDiv.classList.add('errorMessage');
+    } else if (tipo === 'hide'){
+        messageDiv.innerHTML = undefined;
+    }
+}
+</script>
 </body>
 </html>

@@ -3,37 +3,57 @@ session_start();
 require_once "../utils.php";
 
 //preparar os dados
-
-echo dump($_POST); 
-
-$_SESSION["usuario_id"];
-$descricao = $_POST['descricao'];
-$valor = $_POST['valor'];
-$tipo = $_POST['tipo'];
-$datahoramovimento = $_POST['datahoramovimento'];
-
+$descricao = isset($_POST['descricao']) ? $_POST['descricao'] : null;
+$valor = isset($_POST['valor']) ? $_POST['valor'] : null;
+$tipo = isset($_POST['tipo']) ? $_POST['tipo'] : null;
+$datahoramovimento = isset($_POST['datahoramovimento']) ? $_POST['datahoramovimento'] : null;
 
 if($descricao == null || $descricao == ""){
-    $erro = "O Campo descrição não pode estar vazio.";
-    redirect("transaction/create.php?error=$erro");
-    exit();
+    $error = "O Campo descrição não pode estar vazio.";
+    httpResponse ([
+        'headers' => [
+            'Content-type:application/json',
+            'charset=utf-8'
+        ],
+        'body' => $error,
+        'code' => 400
+    ]);
 }
 
 if($valor == null || $valor == ""){
-    redirect("transaction/create.php?error=$erro");
-    exit();
+    $error = "Escolha um valor válido.";
+    httpResponse ([
+        'headers' => [
+            'Content-type:application/json',
+            'charset=utf-8'
+        ],
+        'body' => $error,
+        'code' => 400
+    ]);
 }
 
 if($tipo == null || $tipo == ""){
-    $erro = "Selecione o Tipo.";
-    redirect("transaction/create.php?error=$erro");
-    exit();
+    $error = "Selecione o Tipo.";
+    httpResponse ([
+        'headers' => [
+            'Content-type:application/json',
+            'charset=utf-8'
+        ],
+        'body' => $error,
+        'code' => 400
+    ]);
 }
 
 if($datahoramovimento == null || $datahoramovimento == ""){
-    $erro = "Selecione a hora.";
-    redirect("transaction/create.php?error=$erro");
-    exit();
+    $error = "Selecione a data.";
+    httpResponse ([
+        'headers' => [
+            'Content-type:application/json',
+            'charset=utf-8'
+        ],
+        'body' => $error,
+        'code' => 400
+    ]);
 }
 
 // gravar no banco
@@ -52,14 +72,29 @@ $resultado = $statement->execute();
 if($resultado){
     //se der tudo certo, manda de volta para a lista de movimentos
     $success = 'Inserido com sucesso!';
-    redirect("index.php?success=$success");
+    httpResponse ([
+        'headers' => [
+            'Content-type:application/json',
+            'charset=utf-8'
+        ],
+        'body' => $success,
+        'code' => 201
+    ]);
 
 } else {
-    //se não, volta pro formulario dizendo o erro
-    $erro = $statement->errorInfo();
-    $erro = $erro[2];
-    // dump($erro);
-    redirect("transaction/create.php?error=$erro");
+    //se não, volta pro formulario dizendo o error
+    $error = $statement->errorrInfo();
+    $error = $error[2];
+    // dump($error);
+    redirect("transaction/create.php?errorr=$error");
+    httpResponse ([
+        'headers' => [
+            'Content-type:application/json',
+            'charset=utf-8'
+        ],
+        'body' => $error,
+        'code' => 500
+    ]);
 }
 
 ?>
