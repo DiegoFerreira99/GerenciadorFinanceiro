@@ -16,6 +16,9 @@ nenhum.
 - [ ] testes funcionais
 - [ ] testes front end (e2e/selenium/cypress)
 
+## Permissões
+- [ ] tela de criação de transaciton (somente auth)
+
 ## Na criação
 - [x] data do movimento
 - [x] Tipo do movimento eg. despesa/receita

@@ -10,7 +10,7 @@ $datahoramovimento = isset($_POST['datahoramovimento']) ? $_POST['datahoramovime
 
 if($descricao == null || $descricao == ""){
     $error = "O Campo descrição não pode estar vazio.";
-    httpResponse ([
+    httpResponseExit ([
         'headers' => [
             'Content-type:application/json',
             'charset=utf-8'
@@ -22,7 +22,7 @@ if($descricao == null || $descricao == ""){
 
 if($valor == null || $valor == ""){
     $error = "Escolha um valor válido.";
-    httpResponse ([
+    httpResponseExit ([
         'headers' => [
             'Content-type:application/json',
             'charset=utf-8'
@@ -34,7 +34,7 @@ if($valor == null || $valor == ""){
 
 if($tipo == null || $tipo == ""){
     $error = "Selecione o Tipo.";
-    httpResponse ([
+    httpResponseExit ([
         'headers' => [
             'Content-type:application/json',
             'charset=utf-8'
@@ -46,7 +46,7 @@ if($tipo == null || $tipo == ""){
 
 if($datahoramovimento == null || $datahoramovimento == ""){
     $error = "Selecione a data.";
-    httpResponse ([
+    httpResponseExit ([
         'headers' => [
             'Content-type:application/json',
             'charset=utf-8'
@@ -72,7 +72,7 @@ $resultado = $statement->execute();
 if($resultado){
     //se der tudo certo, manda de volta para a lista de movimentos
     $success = 'Inserido com sucesso!';
-    httpResponse ([
+    httpResponseExit ([
         'headers' => [
             'Content-type:application/json',
             'charset=utf-8'
@@ -85,9 +85,7 @@ if($resultado){
     //se não, volta pro formulario dizendo o error
     $error = $statement->errorrInfo();
     $error = $error[2];
-    // dump($error);
-    redirect("transaction/create.php?errorr=$error");
-    httpResponse ([
+    httpResponseExit ([
         'headers' => [
             'Content-type:application/json',
             'charset=utf-8'
@@ -96,5 +94,4 @@ if($resultado){
         'code' => 500
     ]);
 }
-
 ?>

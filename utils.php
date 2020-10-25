@@ -24,7 +24,8 @@ function converteData ($stringData){
     $dateObject = \DateTime::createFromFormat('Y-m-d H:i:s',$stringData);
 
     //uso o método format do objeto datetime para criar uma data do meu jeito
-    $dateTimeReadable = $dateObject->format('d/m/Y H:i');// H:i:s
+    // $dateTimeReadable = $dateObject->format('d/m/Y H:i');// H:i:s
+    $dateTimeReadable = $dateObject->format('d/m/Y');
 
     //gera o nome do dia da semana em ptbr
     $weekDay = strftime("%A", $dateObject->getTimestamp());
@@ -81,11 +82,22 @@ function basicValidation($value, $rules){
  * Recebe nome do campo, valor do campo, regras e destino caso erro
  * Valida campos, cria a mensagem de erro e dispara para o destino caso erro.
  */
-function validate($name, $value, $rules, $destinoCasoErro){
+function validate($name, $value, $rules, $restApi = true){
     $validate = basicValidation($value, $rules);
     if(!$validate[0]) {
-        redirect($destinoCasoErro . "?error=Campo $name: $validate[1]");
-        exit();
+        $error = "Campo $name: $validate[1]";
+        if(!$restApi) {
+            return $error;
+        } else {
+            httpResponseExit ([
+                'headers' => [
+                    'Content-type:application/json',
+                    'charset=utf-8'
+                ],
+                'body' => $error,
+                'code' => 400
+            ]);
+        }
     }
 }
 
@@ -129,7 +141,7 @@ function allowUser ($neededStatus)
     }
 }
 
-function httpResponse ($args) {
+function httpResponseExit ($args) {
     $headers = '';
     foreach ($args['headers'] as $key => $header) {
         $headers .= "$header;";
