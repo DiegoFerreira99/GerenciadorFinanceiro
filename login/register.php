@@ -1,14 +1,14 @@
 <?php
 require_once "../utils.php";
 
-$nome = $_POST['nome'];
-$senha = $_POST['senha'];
-$repitaSenha = $_POST['repitaSenha'];
+$nome = isset($_POST['nome']) ? $_POST['nome']:null; 
+$senha = isset($_POST['senha']) ? $_POST['senha']:null;
+$repitaSenha = isset($_POST['repitaSenha']) ? $_POST['repitaSenha']:null;
 
-validate('Nome', $nome, ['notNull' => 1, 'notEmptyString' => 1], '');
-validate('Senha', $senha, ['notNull' => 1, 'notEmptyString' => 1], '');
-validate('Repita a senha', $repitaSenha, ['notNull' => 1, 'notEmptyString' => 1], '');
-validate('Repita a senha', $senha, ['equals' => 1, 'value' => $repitaSenha], '');
+validate('Nome', $nome, ['notNull' => 1, 'notEmptyString' => 1]);
+validate('Senha', $senha, ['notNull' => 1, 'notEmptyString' => 1]);
+validate('Repita a senha', $repitaSenha, ['notNull' => 1, 'notEmptyString' => 1]);
+validate('Repita a senha', $senha, ['equals' => 1, 'value' => $repitaSenha]);
 
 $pdo = dbConnect();
 
@@ -19,8 +19,14 @@ $resultUsuarios = $statement->execute();
 $usuarios = $statement->fetchAll(PDO::FETCH_ASSOC);
 if(count($usuarios) > 0){
     $erro = 'Nome em uso! Escolha outro!';
-    redirect("index.php?error=$erro");
-    exit();
+    httpResponseExit ([
+        'headers' => [
+            'Content-type:application/json',
+            'charset=utf-8'
+        ],
+        'body' => $erro,
+        'code' => 400
+    ]);
 }
 
 //hashear a senha
@@ -34,10 +40,24 @@ $resultado = $statement2->execute();
 
 if($resultado){
     $success = "Inserido com sucesso";
-    redirect("index.php?success=$success");
+    httpResponseExit ([
+        'headers' => [
+            'Content-type:application/json',
+            'charset=utf-8'
+        ],
+        'body' => $success,
+        'code' => 200
+    ]);
 
 } else {
     $erro = $statement->errorInfo();
     $erro = $erro[2];
-    redirect("index.php?error=$erro");
+    httpResponseExit ([
+        'headers' => [
+            'Content-type:application/json',
+            'charset=utf-8'
+        ],
+        'body' => $erro,
+        'code' => 400
+    ]);
 }

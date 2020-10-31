@@ -153,9 +153,6 @@ function httpResponseExit ($args) {
     if(isset($args['body']) && $args['body'] !== null){
         $data['body'] = $args['body'];
     }
-    // if(isset($args['error']) && $args['error'] !== null){
-    //     $data['error'] = $args['error'];
-    // }
 
     echo json_encode($data);
     

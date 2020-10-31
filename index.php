@@ -23,40 +23,25 @@ allowUser('guest');
         <input type="password" name="senha" id="senhaLogin"><br><br>
         
         <button class="btn" type="button" onclick="sendLogin()">Entrar</button>
-        <div id="messageDiv"></div>
+        <div id="messageDivLogin"></div>
     </form>
 
 
     <hr>
 
     <h2>Cadastro</h2>
-    <form action="<?= path('login\register.php') ?>" method="POST">
+    <form id="formRegister" action="<?= path('login\register.php') ?>" method="POST">
         <label for="nomeRegister">Nome</label>
         <input type="text" name="nome" id="nomeRegister"><br><br>
 
         <label for="senhaRegister">Senha</label>
-        <input type="password" name="senha" id="senha1Register"><br><br>
+        <input type="password" name="senha" id="senhaRegister"><br><br>
 
         <label for="repitaSenhaRegister">Repita a senha</label>
         <input type="password" name="repitaSenha" id="repitaSenhaRegister"><br><br>
 
-        <input type="submit" value="Criar conta">
-
-        <?php if(isset($_GET['success'])){
-            echo "
-            <div class='successMessage'>
-                $_GET[success]
-            </div>
-            ";
-        } ?>
-
-        <?php if(isset($_GET['error'])){
-            echo "
-            <div class='errorMessage'>
-                $_GET[error]
-            </div>
-            ";
-        } ?>
+        <button class="btn" type="button" onclick="sendRegister()">Criar Conta</button>
+        <div id="messageDivRegister"></div>
     </form>
 <script>
 function sendLogin() {
@@ -76,11 +61,11 @@ function sendLogin() {
 
     //se o form não for válido, mostra o erro
     if(formValido === false){
-        setMessage ('messageDiv', alerta, 'erro');
+        setMessage ('messageDivLogin', alerta, 'erro');
         return;
     } else {
         //se for válido, garante que o quadro de mensagem não aparecerá agora.
-        setMessage ('messageDiv', '', 'hide');
+        setMessage ('messageDivLogin', '', 'hide');
     }
 
     //crio um objeto form para colocar os dados
@@ -99,12 +84,70 @@ function sendLogin() {
         response.json().then(function(dados) { //converte pra json. quando terminar de converter...
             if(response.ok) {
                 //se deu bom, eu boto a mensagem de sucesso e apago o conteudo do form html
-                setMessage ('messageDiv', dados.body, 'sucesso');
+                setMessage ('messageDivLogin', dados.body, 'sucesso');
                 document.getElementById("formLogin").reset();
                 window.location.href = "<?= path('/listamovimentos.php') ?>";
             } else {
                 //se deu ruim, eu boto a mensagem de erro, mas deixo o conteudo pro usuario ajustar e mandar de novo.
-                setMessage ('messageDiv', dados.body, 'erro');
+                setMessage ('messageDivLogin', dados.body, 'erro');
+            }
+        });
+    }).catch(function (error){
+        //se de um bug cabuloso eu mostro no console...
+        console.log('erro catch', error);
+    });
+}
+
+function sendRegister() {
+    //pega os dados do elemento form do html
+    let nomeRegister = document.getElementById("nomeRegister").value;
+    let senhaRegister = document.getElementById("senhaRegister").value;
+    let repitaSenhaRegister = document.getElementById("repitaSenhaRegister").value;
+    // para cada dado, se não atende às especificações, seta uma mensagem de erro e invalida o form.
+    let formValido = true;
+    let alerta = '';
+    if(nomeRegister == null || nomeRegister == ''){
+        formValido = false;
+        alerta = 'Preencha o Nome!';
+    } else if(senhaRegister == null || senhaRegister == ''){
+        formValido = false;
+        alerta = 'Preencha a Senha!';
+    } else if (repitaSenhaRegister !== senhaRegister){
+        formValido = false;
+        alerta = 'Senhas diferentes!'
+    }
+
+    //se o form não for válido, mostra o erro
+    if(formValido === false){
+        setMessage ('messageDivRegister', alerta, 'erro');
+        return;
+    } else {
+        //se for válido, garante que o quadro de mensagem não aparecerá agora.
+        setMessage ('messageDivRegister', '', 'hide');
+    }
+
+    //crio um objeto form para colocar os dados
+    let form = new FormData();
+    form.set('nome',nomeRegister);
+    form.set('senha',senhaRegister);
+    form.set('repitaSenha', repitaSenhaRegister);
+
+    //dispara request post para o login.php com os dados do form
+    fetch('login/register.php', {
+        method: 'POST',
+        headers: new Headers(),
+        mode: 'cors',
+        cache: 'default',
+        body: form
+    }).then(function(response) { //quando terminar a request...
+        response.json().then(function(dados) { //converte pra json. quando terminar de converter...
+            if(response.ok) {
+                //se deu bom, eu boto a mensagem de sucesso e apago o conteudo do form html
+                setMessage ('messageDivRegister', dados.body, 'sucesso');
+                document.getElementById("formRegister").reset();
+            } else {
+                //se deu ruim, eu boto a mensagem de erro, mas deixo o conteudo pro usuario ajustar e mandar de novo.
+                setMessage ('messageDivRegister', dados.body, 'erro');
             }
         });
     }).catch(function (error){
