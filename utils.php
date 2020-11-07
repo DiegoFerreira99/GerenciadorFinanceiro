@@ -39,7 +39,7 @@ function converteSaldo ($saldoOriginal){
     return $saldoLegivel;
 }
 function path($string){
-    $caminho = "http://".$_SERVER["HTTP_HOST"]."\\".$string;
+    $caminho = "http://".$_SERVER["HTTP_HOST"]."/".$string;
     return $caminho;
 }
 
@@ -101,17 +101,9 @@ function validate($name, $value, $rules, $restApi = true){
     }
 }
 
-
-/**
- * @param string $neededStatus
- * Verifica se o usuário está logado e pode ver a página atual.
- * Needed Status pode ser guest para não logado ou logged para logado.
- */
-function allowUser ($neededStatus)
+function checkAuth($neededStatus)
 {
     session_start();
-    $defaultLogged = 'listamovimentos.php';
-    $defaultGuest = 'index.php';
 
     $logged = false;
     if(
@@ -122,17 +114,58 @@ function allowUser ($neededStatus)
         $logged = true;
     }
 
+    return $logged;
+}
+
+/**
+ * @param string $neededStatus
+ * @param boolean $isAPI default false
+ * Verifica se o usuário está logado e pode ver a página atual.
+ * Caso o argumento $isAPI não seja passado, considera como metida de segurança redirecionar o usuário para uma página default.
+ * Caso o argumento $isAPI seja true, considera como medidade segurança retornar uma mensagem de erro com codigo 401 e encerrar a reqeust.
+ * Needed Status pode ser 'guest' para não logado ou 'logged' para logado.
+ */
+function allowOnly ($neededStatus, $isAPI = false)
+{
+    $defaultLogged = 'transaction/listamovimentos.php';
+    $defaultGuest = 'index.php';
+    $logged = checkAuth($neededStatus);
+
     switch ($neededStatus) {
         case 'guest':
             if($logged){
                 //se é visita e está logado, redireciona
-                redirect($defaultLogged);
+                if($isAPI) {
+                    $error = "Você não pode estar logado para realizar essa ação!";
+                    httpResponseExit ([
+                        'headers' => [
+                            'Content-type:application/json',
+                            'charset=utf-8'
+                        ],
+                        'body' => $error,
+                        'code' => 401
+                    ]);
+                } else {
+                    redirect($defaultLogged);
+                }
             }
             break;
         case 'logged':
             if(!$logged){
-                //se devia setar logado mas não está, é visita, redireciona
-                redirect($defaultGuest);
+                //se devia setar logado mas não está, é visita, redireciona ou retorna erro
+                if($isAPI) {
+                    $error = "Você precisa estar logado para realizar essa ação!";
+                    httpResponseExit ([
+                        'headers' => [
+                            'Content-type:application/json',
+                            'charset=utf-8'
+                        ],
+                        'body' => $error,
+                        'code' => 401
+                    ]);
+                } else {
+                    redirect($defaultGuest);
+                }
             }
             break;
         default:

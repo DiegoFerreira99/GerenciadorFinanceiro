@@ -1,6 +1,6 @@
 <?php
 require_once "utils.php";
-allowUser('guest');
+allowOnly('guest');
 ?>
 
 <!DOCTYPE html>
@@ -86,7 +86,7 @@ function sendLogin() {
                 //se deu bom, eu boto a mensagem de sucesso e apago o conteudo do form html
                 setMessage ('messageDivLogin', dados.body, 'sucesso');
                 document.getElementById("formLogin").reset();
-                window.location.href = "<?= path('/listamovimentos.php') ?>";
+                window.location.href = "<?= path('/transaction/listamovimentos.php') ?>";
             } else {
                 //se deu ruim, eu boto a mensagem de erro, mas deixo o conteudo pro usuario ajustar e mandar de novo.
                 setMessage ('messageDivLogin', dados.body, 'erro');

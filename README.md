@@ -15,6 +15,7 @@ nenhum.
 - [ ] testes unitarios
 - [ ] testes funcionais
 - [ ] testes front end (e2e/selenium/cypress)
+- [ ] allow user para back-end api
 
 ## Permissões
 - [ ] tela de criação de transaciton (somente auth)
