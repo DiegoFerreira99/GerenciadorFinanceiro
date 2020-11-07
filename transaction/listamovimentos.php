@@ -17,6 +17,28 @@ allowOnly('logged');
         loadMovimentos();
     }
 
+    function logout () {
+        fetch('<?= path('login/logout.php'); ?>', {
+            method: 'GET',
+            headers: new Headers(),
+            mode: 'cors',
+            cache: 'default'
+        }).then(function(response) { //quando terminar a request...
+            response.json().then(function(dados) { //converte pra json. quando terminar de converter...
+                if(response.ok) {
+                    //se deu bom, eu boto a mensagem de sucesso e apago o conteudo do form html
+                    window.location.href = "<?= path('index.php') ?>";
+                } else {
+                    //se deu ruim, eu boto a mensagem de erro, mas deixo o conteudo pro usuario ajustar e mandar de novo.
+                    setMessage ('messageDiv', dados.body, 'erro');
+                }
+            });
+        }).catch(function (error){
+            //se de um bug cabuloso eu mostro no console...
+            console.log('erro catch', error);
+        });
+    }
+
     function loadMovimentos () {
         //pega os dados do elemento form do html
 
@@ -68,7 +90,7 @@ allowOnly('logged');
         <h1>Gerenciador Financeiro</h1>
     </header>
     <nav>
-        <a href="<?= path('login\logout.php') ?>">Logout</a>
+        <button onclick="logout()">Logout</button>
         <br>
         <a class="btn" href="<?= path('transaction\create.php') ?>">Novo Movimento</a>
     </nav>
