@@ -1,0 +1,154 @@
+<?php
+
+class FunctionalTester
+{
+
+    public function setPHPSessionCookie () {
+        $url = 'http://localhost:8000/';
+        $result = $this->sendRequest($url, [], 'get', true);
+    }
+
+    public function prepareDatabase(){
+        $this->eraseDatabase();
+    }
+
+    /**
+     * @param string $url
+     * @param mixed $body
+     * Dispara uma requisição via curl retornando os dados e o código http. Caso o resultado seja JSON, também converte e retorna os dados.
+     */
+    public function sendRequest ($url, $body, $method = 'get', $acceptCookies = false) {
+        
+        $encodedFields = http_build_query($body);
+        $ch = curl_init();
+        curl_setopt($ch,CURLOPT_URL, $url);
+        curl_setopt($ch,CURLOPT_POSTFIELDS, $encodedFields);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER, true); 
+        curl_setopt($ch, CURLOPT_HEADER, true);
+
+        if($acceptCookies){
+            if(file_exists('cookiejar.txt')){
+                unlink("cookiejar.txt");
+            }
+            curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookiejar.txt');
+        } else {
+            curl_setopt($ch, CURLOPT_COOKIEFILE, 'cookiejar.txt');
+        }
+        
+        if($method == 'post') {
+            curl_setopt($ch,CURLOPT_POST, true);
+        }
+        $result = curl_exec($ch);
+        $info = curl_getinfo($ch);
+        if(strpos($info['content_type'], 'application/json') !== false){
+            $data = json_decode($result, true);
+            $result = isset($data['body']) ? $data['body'] : $data;
+        }
+        return ['http_code' => $info['http_code'], 'body' => $result];
+    }
+
+    /**
+     * Rotina para apagar as tabelas do banco de dados após os testes
+     */
+    public function eraseDatabase () {
+        $this->truncateTable('movimentos');
+        $this->truncateTable('usuarios');
+    }
+
+    /**
+     * @param string $tableName nome da tabela da qual se deseja apagar todos os registros.
+     * Função que apaga todos os registros da tabela.
+     */
+    public function truncateTable ($tableName) {
+        $pdo = dbConnect();
+        $sql = "DELETE from $tableName;";
+        $result = $pdo->exec($sql);
+    }
+
+    public function haveInDatabase($tableName, $data) {
+        $pdo = dbConnect();
+        $columns = '';
+        $values = '';
+        $i = 0;
+        foreach ($data as $campo => $valor) {
+            if($i > 0) {
+                $columns .= ", ";
+                $values .= ", ";
+            }
+            $columns .= "$campo";
+            $values .= ":$campo";
+            $i++;
+        }
+
+        $sql = "INSERT INTO $tableName ($columns) values ($values);";
+        $statement = $pdo->prepare($sql);
+
+        foreach ($data as $campo => $valor) {
+            $statement->bindValue(":$campo", $valor, PDO::PARAM_STR);
+        }
+
+        $result = $statement->execute();
+
+        return $data;
+    }
+
+    public function haveInDatabaseUsuario()
+    {
+        $usuario = [
+            'nome' => 'nomeTeste',
+            'senha' => '123456'
+        ];
+
+        // $usuario = haveInDatabase('usuarios', $data); //não se pode fazer assim pois o register.php também criptografa a senha
+        $url = 'http://localhost:8000/login/register.php';
+        $result = $this->sendRequest($url, ['nome' => $usuario['nome'], 'senha' => $usuario['senha'], 'repitaSenha' => $usuario['senha']]);
+
+        return $usuario;
+    }
+
+    /**
+     * @param string $table nome da tabela.
+     * @param mixed $data array chave-valor de coluna-valor para se verificar no banco.
+     * Verifica se, na $table informada, existe um ou mais registros com as condições de coluna-valor em $data.
+     * Caso negativo, exibe mensagem de erro.
+     */
+    public function existsInDatabase ($table, $data) {
+        $pdo = dbConnect();
+
+        $where = ' WHERE';
+        $i = 0;
+        foreach ($data as $campo => $valor) {
+            if($i > 0) {
+                $where .= " and";
+            }
+            $where .= " $campo = :$campo";
+            $i++;
+        }
+        $where .= ";";
+
+        $sql = "SELECT * FROM $table $where";
+        $statement = $pdo->prepare($sql);
+
+        foreach ($data as $campo => $valor) {
+            $statement->bindParam(":$campo", $valor, PDO::PARAM_STR);
+        }
+
+        $result = $statement->execute();
+        $list = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        if(count($list) < 1){
+            echo "\n x Erro no teste! Valor ".var_export($data,true)." não existe no banco de dados.\n";
+        }
+    }
+
+    /**
+     * @param string $value1
+     * @param string $value2
+     * Verifica se value1 é igual a value2. Caso negativo, exibe mensagem de erro.
+     */
+    public function assertEquals ($value1 , $value2) {
+        if($value1 !== $value2){
+            echo "\n x Erro no teste! Falha ao verificar que ".var_export($value1,true)." é igual a ".var_export($value2,true).".\n\n";
+        }
+    }
+}
