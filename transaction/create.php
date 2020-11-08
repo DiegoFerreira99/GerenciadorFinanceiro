@@ -1,5 +1,6 @@
 <?php
 require_once('../utils.php');
+allowOnly('logged');
 ?>
 
 <!DOCTYPE html>

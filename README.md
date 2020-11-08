@@ -13,9 +13,33 @@ nenhum.
 - [x] separação de movimentos por usuário
 - [ ] converter para framework
 - [ ] testes unitarios
-- [ ] testes funcionais
 - [ ] testes front end (e2e/selenium/cypress)
 - [ ] allow user para back-end api
+
+## testes funcionais
+- [x] login
+- [x] register
+- [ ] index de movimentos
+- [ ] criação de movimentos (despesa)
+- [ ] criação de movimentos (receita)
+
+## testes funcionais negativos
+- [ ] não faz login com nome errado
+- [ ] não faz login com senha errada
+- [ ] não faz register sem nome
+- [ ] não faz register sem senha
+- [ ] não faz register sem senha repetida
+- [ ] não faz register sem senha igual
+- [ ] não cria movimentos se não tem descricao
+- [ ] não cria movimentos se não tem valor
+- [ ] não cria movimentos se não tem data
+- [ ] não cria movimentos se não tem tipo
+
+## testes funcionais permissões
+- [ ] não pode fazer login
+- [ ] não pode se registrar
+- [ ] não pode listar movimentos
+- [ ] não pode criar movimento
 
 ## Permissões
 - [ ] tela de criação de transaciton (somente auth)

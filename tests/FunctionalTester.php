@@ -17,7 +17,7 @@ class FunctionalTester
      * @param mixed $body
      * Dispara uma requisição via curl retornando os dados e o código http. Caso o resultado seja JSON, também converte e retorna os dados.
      */
-    public function sendRequest ($url, $body, $method = 'get', $acceptCookies = false) {
+    public function sendRequest ($url, $body, $method = 'get', $storeReceivedCookies = false) {
         
         $encodedFields = http_build_query($body);
         $ch = curl_init();
@@ -26,24 +26,27 @@ class FunctionalTester
         curl_setopt($ch,CURLOPT_RETURNTRANSFER, true); 
         curl_setopt($ch, CURLOPT_HEADER, true);
 
-        if($acceptCookies){
-            if(file_exists('cookiejar.txt')){
-                unlink("cookiejar.txt");
-            }
-            curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookiejar.txt');
-        } else {
-            curl_setopt($ch, CURLOPT_COOKIEFILE, 'cookiejar.txt');
-        }
-        
         if($method == 'post') {
             curl_setopt($ch,CURLOPT_POST, true);
         }
+
+        if($storeReceivedCookies){
+            if(file_exists('tmp/cookiejar.txt')){
+                unlink("tmp/cookiejar.txt");
+            }
+            curl_setopt($ch, CURLOPT_COOKIEJAR, 'tmp/cookiejar.txt');
+        } else {
+            curl_setopt($ch, CURLOPT_COOKIEFILE, 'tmp/cookiejar.txt');
+        }
+        
         $result = curl_exec($ch);
         $info = curl_getinfo($ch);
+
         if(strpos($info['content_type'], 'application/json') !== false){
             $data = json_decode($result, true);
             $result = isset($data['body']) ? $data['body'] : $data;
         }
+        
         return ['http_code' => $info['http_code'], 'body' => $result];
     }
 
