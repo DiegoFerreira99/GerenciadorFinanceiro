@@ -1,5 +1,7 @@
 <?php
 
+require_once 'tests/FunctionalTester.php';
+
 class TestRunner
 {
 
@@ -15,16 +17,19 @@ class TestRunner
         $this->functionalTester->setPHPSessionCookie();
         $this->functionalTester->prepareDatabase();
 
-        $this->runTest('testRegister');
-        $this->runTest('testLogin');
+        $this->runTest('UsuariosCest','testRegister');
+        $this->runTest('UsuariosCest','testLogin');
+        $this->runTest('UsuariosCest','testLogout');
+        $this->runTest('MovimentosCest','testIndexMovimentos');
     }
     
     /**
      * Dado o nome da função-teste, executa a mesma e limpa o banco logo após.
      */
-    public function runTest($testName) {
-        $usuariosCest = new UsuariosCest();
-        $usuariosCest->$testName($this->functionalTester);
+    public function runTest($className,$testName) {
+        require_once "tests/$className.php";
+        $objectCest = new $className();
+        $objectCest->$testName($this->functionalTester);
         $this->functionalTester->eraseDatabase();
     }
 }

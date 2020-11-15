@@ -9,6 +9,7 @@ $senha = isset($_POST['senha']) ? $_POST['senha'] : null;
 validate('Nome', $nome, ['notNull' => 1, 'notEmptyString' => 1]);
 validate('Senha', $senha, ['notNull' => 1, 'notEmptyString' => 1]);
 
+
 $pdo = dbConnect();
 
 $sql = 'SELECT * FROM usuarios where nome = :nome';
