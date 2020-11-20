@@ -19,6 +19,7 @@ nenhum.
 ## tester
 - [x] functionalTester login
 - [x] functionalTester logout
+- [ ] TestRunner->run() aceitar argumentos classe e metodo
 
 ## testes funcionais
 - [x] login
