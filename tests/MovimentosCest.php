@@ -66,4 +66,35 @@ class MovimentosCest
         //desloga
         $functionalTester->logout();
     }
+
+    public function testInsertMovimentoReceita(\FunctionalTester $functionalTester)
+    {
+        //prepara usuario e movimento no banco
+        $usuario = $functionalTester->haveInDatabaseUsuario();
+        
+        //loga com usuario para consultar os movimentos
+        $functionalTester->login($usuario['nome'], $usuario['senha']);
+
+        //consulta os movimentos
+        $url = 'http://localhost:8000/transaction/store.php';
+        $movimentoParaInserir = [
+            'descricao' => 'uma receita',
+            'valor' => '500',
+            'tipo' => 'Receita',
+            'datahoramovimento' => date('Y-m-d H:i:s'),
+        ];
+        $result = $functionalTester->sendRequest($url, $movimentoParaInserir);
+
+        //checa se deu 200 ok
+        $functionalTester->assertEquals($result['http_code'], 201);
+
+        //exibe o movimento do banco
+        $movimentoBanco = $functionalTester->getListFromDatabase('movimentos', []);
+
+        //checa se o movimento está no banco
+        $functionalTester->existsInDatabase('movimentos', $movimentoParaInserir);
+
+        //desloga
+        $functionalTester->logout();
+    }
 }
