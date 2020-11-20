@@ -19,9 +19,11 @@ for ($i=0; $i < count($movimentos); $i++) {
     if($movimentos[$i]['tipo'] == "Despesa"){
         $saldofinal = $saldofinal - $movimentos[$i]['valor'];
         $movimentos[$i]['saldo']=$saldofinal;
-    }elseif($movimentos[$i]['tipo'] == "Receita"){
+    } elseif($movimentos[$i]['tipo'] == "Receita"){
         $saldofinal = $saldofinal + $movimentos[$i]['valor'];
         $movimentos[$i]['saldo']=$saldofinal;
+    } else {
+        throw new \Exception("TIPO DO MOVIMENTO diferente de Despesa e Receita.", 1);
     }
     //convertendo a data para uma data legível
     $movimentos[$i]['datahoramovimentoReadable'] = converteData($movimentos[$i]['datahoramovimento']);

@@ -52,15 +52,19 @@ class FunctionalTester
             curl_setopt($ch, CURLOPT_COOKIEFILE, 'tmp/cookiejar.txt');
         }
         
-        $result = curl_exec($ch);
+        $response = curl_exec($ch);
         $info = curl_getinfo($ch);
+        $header_size = $info['header_size'];
+        $header = substr($response, 0, $header_size);
+        $body = substr($response, $header_size);
 
         if(strpos($info['content_type'], 'application/json') !== false){
-            $data = json_decode($result, true);
-            $result = isset($data['body']) ? $data['body'] : $data;
+            $body = json_decode($body, true);
+            $body = isset($body['body']) ? $body['body'] : $body;
         }
+        $return = $body;
         
-        return ['http_code' => $info['http_code'], 'body' => $result];
+        return ['http_code' => $info['http_code'], 'body' => $return];
     }
 
     /**
@@ -203,7 +207,7 @@ class FunctionalTester
     public function haveInDatabaseMovimento($data)
     {
         $movimento = [
-            'tipo' => 'despesa',
+            'tipo' => 'Despesa',
             'descricao' => 'minha despesa',
             'valor' => 1000.00,
             'datahoramovimento' => date('Y-m-d H:i:s'),

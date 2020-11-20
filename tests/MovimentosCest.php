@@ -10,6 +10,40 @@ class MovimentosCest
     {
         //prepara usuario e movimento no banco
         $usuario = $functionalTester->haveInDatabaseUsuario();
+        
+        $movimentos = [];
+        $movimentos[] = $functionalTester->haveInDatabaseMovimento(['usuario_id' => $usuario['id']]);
+        $movimentos[] = $functionalTester->haveInDatabaseMovimento(['usuario_id' => $usuario['id']]);
+        $movimentos[] = $functionalTester->haveInDatabaseMovimento(['usuario_id' => $usuario['id']]);
+        
+        //loga com usuario para consultar os movimentos
+        $url = 'http://localhost:8000/login/login.php';
+        $result = $functionalTester->sendRequest($url, ['nome' => $usuario['nome'], 'senha' => $usuario['senha']], true);
+        $functionalTester->assertEquals($result['http_code'], 200);
+
+        //consulta os movimentos
+        $url = 'http://localhost:8000/transaction/index.php';
+        $result = $functionalTester->sendRequest($url, []);
+
+        //checa se deu 200 ok
+        $functionalTester->assertEquals($result['http_code'], 200);
+
+        //verificar se o que veio na request result é o que está no array de movimentos.
+        $functionalTester->assertEquals(count($movimentos), count($result['body']['movimentos']));
+
+        //desloga
+        $url = 'http://localhost:8000/login/logout.php';
+        $result = $functionalTester->sendRequest($url,[]);
+        $functionalTester->assertEquals($result['http_code'], 200);
+    }
+
+    /**
+     * Testa a criação de um novo usuário.
+     */
+    public function testInsertMovimentoDespesa(\FunctionalTester $functionalTester)
+    {
+        //prepara usuario e movimento no banco
+        $usuario = $functionalTester->haveInDatabaseUsuario();
         $movimento = $functionalTester->haveInDatabaseMovimento(['usuario_id' => $usuario['id']]);
         
         //loga com usuario para consultar os movimentos
