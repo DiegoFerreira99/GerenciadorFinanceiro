@@ -21,6 +21,7 @@ class TestRunner
         $this->runTest('UsuariosCest','testLogin');
         $this->runTest('UsuariosCest','testLogout');
         $this->runTest('MovimentosCest','testIndexMovimentos');
+        $this->runTest('MovimentosCest','testInsertMovimentoDespesa');
     }
     
     /**
