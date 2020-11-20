@@ -31,6 +31,7 @@ class TestRunner
         $objectCest = new $className();
         $this->functionalTester->testName = "$className::$testName";
         $objectCest->$testName($this->functionalTester);
+        $this->functionalTester->showEndNotice();
         $this->functionalTester->eraseDatabase();
     }
 }

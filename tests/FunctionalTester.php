@@ -71,6 +71,16 @@ class FunctionalTester
         $this->truncateTable('usuarios');
     }
 
+    public function showEndNotice()
+    {
+        echo "   ✔   $this->testName" . PHP_EOL;
+    }
+
+    public function showErrorNotice($message) {
+        echo "❌ $this->testName" . PHP_EOL;
+        echo $message. PHP_EOL;
+    }
+
     /**
      * @param string $tableName nome da tabela da qual se deseja apagar todos os registros.
      * Função que apaga todos os registros da tabela.
@@ -119,8 +129,8 @@ class FunctionalTester
         $result = $this->getListFromDatabase($table,$data);
 
         if(count($result) < 1){
-            echo "\n x $this->testName";
-            echo "\nValor \n".var_export($data,true)."\n não existe no banco de dados.\n";
+            $message = "Valor" . PHP_EOL .var_export($data,true). PHP_EOL . " não existe no banco de dados.";
+            $this->showErrorNotice($message);
         }
     }
 
@@ -162,8 +172,11 @@ class FunctionalTester
      */
     public function assertEquals ($value1 , $value2) {
         if($value1 !== $value2){
-            echo "\n x $this->testName";
-            echo "\n Falha ao verificar que \n".var_export($value1,true)."\n é igual a \n".var_export($value2,true).".\n\n";
+            $message = "Falha ao verificar que" . PHP_EOL .
+            var_export($value1,true). PHP_EOL .
+            "é igual a" . PHP_EOL .
+            var_export($value2,true);
+            $this->showErrorNotice($message);
         }
     }
 
