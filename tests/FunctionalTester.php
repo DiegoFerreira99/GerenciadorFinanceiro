@@ -3,6 +3,19 @@
 class FunctionalTester
 {
 
+    private $testName;
+
+    public function __set($name, $value)
+    {
+        $this->$name = $value;
+        return $this;
+    }
+
+    public function __get($name)
+    {
+        return $this->$name;
+    }
+
     public function setPHPSessionCookie () {
         $url = 'http://localhost:8000/';
         $result = $this->sendRequest($url, [], 'get', true);
@@ -95,27 +108,24 @@ class FunctionalTester
         return $data;
     }
 
-    public function haveInDatabaseUsuario()
-    {
-        $usuario = [
-            'nome' => 'nomeTeste',
-            'senha' => '123456'
-        ];
-
-        // $usuario = haveInDatabase('usuarios', $data); //não se pode fazer assim pois o register.php também criptografa a senha
-        $url = 'http://localhost:8000/login/register.php';
-        $result = $this->sendRequest($url, ['nome' => $usuario['nome'], 'senha' => $usuario['senha'], 'repitaSenha' => $usuario['senha']]);
-
-        return $usuario;
-    }
-
     /**
      * @param string $table nome da tabela.
      * @param mixed $data array chave-valor de coluna-valor para se verificar no banco.
      * Verifica se, na $table informada, existe um ou mais registros com as condições de coluna-valor em $data.
      * Caso negativo, exibe mensagem de erro.
      */
-    public function existsInDatabase ($table, $data) {
+    public function existsInDatabase ($table, $data)
+    {
+        $result = $this->getListFromDatabase($table,$data);
+
+        if(count($result) < 1){
+            echo "\n x $this->testName";
+            echo "\nValor \n".var_export($data,true)."\n não existe no banco de dados.\n";
+        }
+    }
+
+    public function getListFromDatabase($table, $data)
+    {
         $pdo = dbConnect();
 
         $where = ' WHERE';
@@ -133,15 +143,16 @@ class FunctionalTester
         $statement = $pdo->prepare($sql);
 
         foreach ($data as $campo => $valor) {
-            $statement->bindParam(":$campo", $valor, PDO::PARAM_STR);
+            if(is_float($valor)){
+                $valor = number_format($valor, 2, '.' , '');
+            }
+            $statement->bindValue(":$campo", $valor, PDO::PARAM_STR);
         }
 
         $result = $statement->execute();
         $list = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-        if(count($list) < 1){
-            echo "\n x Erro no teste! Valor ".var_export($data,true)." não existe no banco de dados.\n";
-        }
+        return $list;
     }
 
     /**
@@ -151,7 +162,43 @@ class FunctionalTester
      */
     public function assertEquals ($value1 , $value2) {
         if($value1 !== $value2){
-            echo "\n x Erro no teste! Falha ao verificar que ".var_export($value1,true)." é igual a ".var_export($value2,true).".\n\n";
+            echo "\n x $this->testName";
+            echo "\n Falha ao verificar que \n".var_export($value1,true)."\n é igual a \n".var_export($value2,true).".\n\n";
         }
     }
+
+    public function haveInDatabaseUsuario()
+    {
+        $usuario = [
+            'nome' => 'nomeTeste',
+            'senha' => '123456'
+        ];
+
+        // $usuario = haveInDatabase('usuarios', $data); //não se pode fazer assim pois o register.php também criptografa a senha
+        $url = 'http://localhost:8000/login/register.php';
+        $result = $this->sendRequest($url, ['nome' => $usuario['nome'], 'senha' => $usuario['senha'], 'repitaSenha' => $usuario['senha']]);
+
+
+        //fazer uma consulta para pegar o ID do usuario
+        $usuarios = $this->getListFromDatabase('usuarios', ['nome' => 'nomeTeste']);
+        $usuario['id'] = $usuarios[0]['id'];
+        
+        return $usuario;
+    }
+
+
+    public function haveInDatabaseMovimento($data)
+    {
+        $movimento = [
+            'tipo' => 'despesa',
+            'descricao' => 'minha despesa',
+            'valor' => 1000.00,
+            'datahoramovimento' => date('Y-m-d H:i:s'),
+            'usuario_id' => $data['usuario_id']
+        ];
+
+        $movimento = $this->haveInDatabase('movimentos', $movimento);
+        return $movimento;
+    }
+
 }

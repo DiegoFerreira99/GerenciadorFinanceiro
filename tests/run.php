@@ -14,8 +14,6 @@
 
 require_once 'utils.php';
 require_once 'tests/TestRunner.php';
-require_once 'tests/FunctionalTester.php';
-require_once 'tests/UsuariosCest.php';
 
 $testRunner = new TestRunner();
 $testRunner->run();
