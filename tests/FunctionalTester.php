@@ -3,6 +3,19 @@
 class FunctionalTester
 {
 
+    private $testName;
+
+    public function __set($name, $value)
+    {
+        $this->$name = $value;
+        return $this;
+    }
+
+    public function __get($name)
+    {
+        return $this->$name;
+    }
+
     public function setPHPSessionCookie () {
         $url = 'http://localhost:8000/';
         $result = $this->sendRequest($url, [], 'get', true);
@@ -39,15 +52,19 @@ class FunctionalTester
             curl_setopt($ch, CURLOPT_COOKIEFILE, 'tmp/cookiejar.txt');
         }
         
-        $result = curl_exec($ch);
+        $response = curl_exec($ch);
         $info = curl_getinfo($ch);
+        $header_size = $info['header_size'];
+        $header = substr($response, 0, $header_size);
+        $body = substr($response, $header_size);
 
         if(strpos($info['content_type'], 'application/json') !== false){
-            $data = json_decode($result, true);
-            $result = isset($data['body']) ? $data['body'] : $data;
+            $body = json_decode($body, true);
+            $body = isset($body['body']) ? $body['body'] : $body;
         }
+        $return = $body;
         
-        return ['http_code' => $info['http_code'], 'body' => $result];
+        return ['http_code' => $info['http_code'], 'body' => $return];
     }
 
     /**
@@ -56,6 +73,16 @@ class FunctionalTester
     public function eraseDatabase () {
         $this->truncateTable('movimentos');
         $this->truncateTable('usuarios');
+    }
+
+    public function showEndNotice()
+    {
+        echo "   ✔   $this->testName" . PHP_EOL;
+    }
+
+    public function showErrorNotice($message) {
+        echo "❌ $this->testName" . PHP_EOL;
+        echo $message. PHP_EOL;
     }
 
     /**
@@ -106,7 +133,8 @@ class FunctionalTester
         $result = $this->getListFromDatabase($table,$data);
 
         if(count($result) < 1){
-            echo "\n x Erro no teste! Valor ".var_export($data,true)." não existe no banco de dados.\n";
+            $message = "Valor" . PHP_EOL .var_export($data,true). PHP_EOL . " não existe no banco de dados.";
+            $this->showErrorNotice($message);
         }
     }
 
@@ -129,7 +157,10 @@ class FunctionalTester
         $statement = $pdo->prepare($sql);
 
         foreach ($data as $campo => $valor) {
-            $statement->bindParam(":$campo", $valor, PDO::PARAM_STR);
+            if(is_float($valor)){
+                $valor = number_format($valor, 2, '.' , '');
+            }
+            $statement->bindValue(":$campo", $valor, PDO::PARAM_STR);
         }
 
         $result = $statement->execute();
@@ -145,7 +176,11 @@ class FunctionalTester
      */
     public function assertEquals ($value1 , $value2) {
         if($value1 !== $value2){
-            echo "\n x Erro no teste! Falha ao verificar que ".var_export($value1,true)." é igual a ".var_export($value2,true).".\n\n";
+            $message = "Falha ao verificar que" . PHP_EOL .
+            var_export($value1,true). PHP_EOL .
+            "é igual a" . PHP_EOL .
+            var_export($value2,true);
+            $this->showErrorNotice($message);
         }
     }
 
@@ -172,7 +207,7 @@ class FunctionalTester
     public function haveInDatabaseMovimento($data)
     {
         $movimento = [
-            'tipo' => 'despesa',
+            'tipo' => 'Despesa',
             'descricao' => 'minha despesa',
             'valor' => 1000.00,
             'datahoramovimento' => date('Y-m-d H:i:s'),
@@ -180,7 +215,6 @@ class FunctionalTester
         ];
 
         $movimento = $this->haveInDatabase('movimentos', $movimento);
-
         return $movimento;
     }
 

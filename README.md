@@ -19,7 +19,7 @@ nenhum.
 ## testes funcionais
 - [x] login
 - [x] register
-- [ ] index de movimentos
+- [x] index de movimentos
 - [ ] criação de movimentos (despesa)
 - [ ] criação de movimentos (receita)
 

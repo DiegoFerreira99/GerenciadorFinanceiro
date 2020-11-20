@@ -21,6 +21,7 @@ class TestRunner
         $this->runTest('UsuariosCest','testLogin');
         $this->runTest('UsuariosCest','testLogout');
         $this->runTest('MovimentosCest','testIndexMovimentos');
+        $this->runTest('MovimentosCest','testInsertMovimentoDespesa');
     }
     
     /**
@@ -29,7 +30,9 @@ class TestRunner
     public function runTest($className,$testName) {
         require_once "tests/$className.php";
         $objectCest = new $className();
+        $this->functionalTester->testName = "$className::$testName";
         $objectCest->$testName($this->functionalTester);
+        $this->functionalTester->showEndNotice();
         $this->functionalTester->eraseDatabase();
     }
 }
