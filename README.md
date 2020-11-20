@@ -16,11 +16,16 @@ nenhum.
 - [ ] testes front end (e2e/selenium/cypress)
 - [ ] allow user para back-end api
 
+## tester
+- [x] functionalTester login
+- [x] functionalTester logout
+
 ## testes funcionais
 - [x] login
 - [x] register
 - [x] index de movimentos
-- [ ] criação de movimentos (despesa)
+- [ ] get de movimento
+- [x] criação de movimentos (despesa)
 - [ ] criação de movimentos (receita)
 
 ## testes funcionais negativos

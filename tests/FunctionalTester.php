@@ -25,6 +25,20 @@ class FunctionalTester
         $this->eraseDatabase();
     }
 
+    public function login($nome, $senha)
+    {
+        $url = 'http://localhost:8000/login/login.php';
+        $result = $this->sendRequest($url, ['nome' => $nome, 'senha' => $senha], true);
+        $this->assertEquals($result['http_code'], 200);
+    }
+
+    public function logout()
+    {
+        $url = 'http://localhost:8000/login/logout.php';
+        $result = $this->sendRequest($url,[]);
+        $this->assertEquals($result['http_code'], 200);
+    }
+
     /**
      * @param string $url
      * @param mixed $body

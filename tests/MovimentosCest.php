@@ -17,9 +17,7 @@ class MovimentosCest
         $movimentos[] = $functionalTester->haveInDatabaseMovimento(['usuario_id' => $usuario['id']]);
         
         //loga com usuario para consultar os movimentos
-        $url = 'http://localhost:8000/login/login.php';
-        $result = $functionalTester->sendRequest($url, ['nome' => $usuario['nome'], 'senha' => $usuario['senha']], true);
-        $functionalTester->assertEquals($result['http_code'], 200);
+        $functionalTester->login($usuario['nome'], $usuario['senha']);
 
         //consulta os movimentos
         $url = 'http://localhost:8000/transaction/index.php';
@@ -31,10 +29,8 @@ class MovimentosCest
         //verificar se o que veio na request result é o que está no array de movimentos.
         $functionalTester->assertEquals(count($movimentos), count($result['body']['movimentos']));
 
-        //desloga
-        $url = 'http://localhost:8000/login/logout.php';
-        $result = $functionalTester->sendRequest($url,[]);
-        $functionalTester->assertEquals($result['http_code'], 200);
+        //logout
+        $functionalTester->logout();
     }
 
     /**
@@ -46,9 +42,7 @@ class MovimentosCest
         $usuario = $functionalTester->haveInDatabaseUsuario();
         
         //loga com usuario para consultar os movimentos
-        $url = 'http://localhost:8000/login/login.php';
-        $result = $functionalTester->sendRequest($url, ['nome' => $usuario['nome'], 'senha' => $usuario['senha']], true);
-        $functionalTester->assertEquals($result['http_code'], 200);
+        $functionalTester->login($usuario['nome'], $usuario['senha']);
 
         //consulta os movimentos
         $url = 'http://localhost:8000/transaction/store.php';
@@ -70,8 +64,6 @@ class MovimentosCest
         $functionalTester->existsInDatabase('movimentos', $movimentoParaInserir);
 
         //desloga
-        $url = 'http://localhost:8000/login/logout.php';
-        $result = $functionalTester->sendRequest($url,[]);
-        $functionalTester->assertEquals($result['http_code'], 200);
+        $functionalTester->logout();
     }
 }
