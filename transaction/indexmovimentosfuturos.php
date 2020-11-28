@@ -7,7 +7,7 @@ $saldofinal = $saldoinicial;
 
 // pegar do banco
 $pdo = dbConnect();
-$sql = 'select * from movimentos WHERE usuario_id = :usuario_id and datahoramovimento <= :datahoramovimento order by id asc;';
+$sql = 'select * from movimentos WHERE usuario_id = :usuario_id and datahoramovimento > :datahoramovimento order by id asc;';
 $statement = $pdo->prepare($sql);
 $datahoje = date('Y-m-d H:i:s');
 $statement->bindValue(":usuario_id", $_SESSION["usuario_id"], PDO::PARAM_STR);
