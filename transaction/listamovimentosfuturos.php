@@ -43,13 +43,14 @@ allowOnly('logged');
         //pega os dados do elemento form do html
 
         //dispara request post para o login.php com os dados do form
-        fetch('<?= path('transaction/index.php'); ?>', {
+        fetch('<?= path('transaction/indexmovimentosfuturos.php'); ?>', {
             method: 'GET',
             headers: new Headers(),
             mode: 'cors',
             cache: 'default'
         }).then(function(response) { //quando terminar a request...
             response.json().then(function(dados) { //converte pra json. quando terminar de converter...
+            console.log(dados);
                 if(response.ok) {
                     //se deu bom, eu boto a mensagem de sucesso e apago o conteudo do form html
                     showMovimentos(dados['body']);
@@ -93,7 +94,6 @@ allowOnly('logged');
         <button onclick="logout()">Logout</button>
         <br>
         <a class="btn" href="<?= path('transaction\create.php') ?>">Novo Movimento</a>
-        <a class="btn" href="<?= path('transaction\listamovimentosfuturos.php') ?>">Visulizar Movimentos Futuros</a>
     </nav>
     <section>
         <h3>Movimentos</h3>
