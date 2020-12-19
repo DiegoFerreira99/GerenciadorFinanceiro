@@ -134,7 +134,7 @@ function allowOnly ($neededStatus, $isAPI = false)
     switch ($neededStatus) {
         case 'guest':
             if($logged){
-                //se é visita e está logado, redireciona
+                //se eu permito um visitante, mas está logado, logo não é visitante
                 if($isAPI) {
                     $error = "Você não pode estar logado para realizar essa ação!";
                     httpResponseExit ([

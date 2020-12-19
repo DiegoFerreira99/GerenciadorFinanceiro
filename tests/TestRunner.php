@@ -12,17 +12,25 @@ class TestRunner
         $this->functionalTester = new FunctionalTester();
     }
 
-    public function run()
+    public function run($class, $method)
     {
         $this->functionalTester->setPHPSessionCookie();
         $this->functionalTester->prepareDatabase();
+        
+        if($class == null && $method == null){
+            $this->runTest('UsuariosCest','testRegister');
+            $this->runTest('UsuariosCest','testLogin');
+            $this->runTest('UsuariosCest','testLogout');
+            $this->runTest('MovimentosCest','testIndexMovimentos');
+            $this->runTest('MovimentosCest','testInsertMovimentoDespesa');
+            $this->runTest('MovimentosCest','testInsertMovimentoReceita');
+        }elseif($class == null || $method == null){ 
+            echo "Quantidade de argumentos incorreto";                  
+        }else{
+            $this->runTest($class, $method);
+        }
 
-        $this->runTest('UsuariosCest','testRegister');
-        $this->runTest('UsuariosCest','testLogin');
-        $this->runTest('UsuariosCest','testLogout');
-        $this->runTest('MovimentosCest','testIndexMovimentos');
-        $this->runTest('MovimentosCest','testInsertMovimentoDespesa');
-        $this->runTest('MovimentosCest','testInsertMovimentoReceita');
+
     }
     
     /**

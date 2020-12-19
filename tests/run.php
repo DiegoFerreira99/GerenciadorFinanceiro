@@ -16,4 +16,7 @@ require_once 'utils.php';
 require_once 'tests/TestRunner.php';
 
 $testRunner = new TestRunner();
-$testRunner->run();
+$testRunner->run(
+    isset($argv[1]) ? $argv[1] : null,
+    isset($argv[2]) ? $argv[2] : null
+                );

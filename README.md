@@ -11,10 +11,10 @@ nenhum.
 - [x] password hash
 - [x] lista de movimentos
 - [x] separação de movimentos por usuário
-- [ ] converter para framework
-- [ ] testes unitarios
-- [ ] testes front end (e2e/selenium/cypress)
-- [ ] allow user para back-end api
+- [ ] N- converter para framework
+- [ ] N- testes unitarios
+- [ ] N- testes front end (e2e/selenium/cypress)
+- [x] allow user para back-end api
 
 ## tester
 - [x] functionalTester login
